@@ -1,0 +1,30 @@
+.electron {
+  fill: black;
+}
+
+.atom {
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.bond {
+  stroke: black;
+}
+
+.aromatic_bond {
+  stroke: black;
+  fill: none;
+  stroke-dasharray: 2,1;
+  stroke-width: 1;
+}
+
+.ring-menu {
+    visibility: hidden  ;
+    pointer-events: all;
+}
+.ring-menu:hover {
+    visibility: visible;
+}
+.atom-ring {
+  fill: "green";
+}

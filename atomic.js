@@ -6,6 +6,8 @@ function centerMolecule(name, molecule) {
   center.append(molecule)
   hdr = document.getElementById("topic_name");
   hdr.textContent = name;
+  hdr = document.getElementById("title");
+  hdr.textContent = name;
 }
 
 var atom_count = 0;

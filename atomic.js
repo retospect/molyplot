@@ -1,12 +1,15 @@
 
-function centerMolecule(name, molecule) {
+function centerMolecule(name, charge, molecule) {
   var svg_top = getElementCanvas();
   resetCanvas();
   var center = getCenter(svg_top);
   center.append(molecule)
   hdr = document.getElementById("topic_name");
   hdr.textContent = name;
+  hdr = document.getElementById("charge");
+  hdr.textContent = "Charge = "+charge;
   document.title = name;
+
 }
 
 var atom_count = 0;
@@ -20,61 +23,207 @@ function resetCanvas() {
 function CO2() {
   var molecule = getSVGElement('g');
   var c_list = [["+O","Carbonate"]];
-  var o_list = [["-O","CarbonMonoxide"]];
+  var o_list = [["-O","CarbonMonoxide"], ["+CH3", "Acetate"]];
   molecule.appendChild(getAtom('C',c_list));
   molecule.appendChild(get2Bond(-90, getAtom('O',o_list)));
   molecule.appendChild(get2Bond(90, getAtom('O',o_list)));
-  centerMolecule('Carbon Dioxide', molecule);
+  centerMolecule('Carbon Dioxide', 0, molecule);
 }
 
 function CarbonMonoxide() {
   var molecule = getSVGElement('g');
-  var c_list = [["+O","CO2"]];
-  var o_list = [];
+  var c_list = [["+O","CO2"], ['O','Peroxide']];
+  var o_list = [['N', 'Cyanide']];
   molecule.appendChild(getAtom('C',c_list));
-  molecule.appendChild(get2Bond(-90, getAtom('O',o_list)));
-  centerMolecule('Carbon Monoxide', molecule);
+  molecule.appendChild(get3Bond(-90, getAtom('O',o_list)));
+  centerMolecule('Carbon Monoxide', 0, molecule);
+}
+
+function Cyanide() {
+  var molecule = getSVGElement('g');
+  var c_list = [['+H', 'HydrocyanicAcid'], ['>2N', 'Azide']];
+  var n_list = [['O', 'CarbonMonoxide']];
+  molecule.appendChild(getAtom('C',c_list));
+  molecule.appendChild(get3Bond(-90, getAtom('N',n_list)));
+  centerMolecule('Cyanide', -1, molecule);
+}
+
+function Azide() {
+  var molecule = getSVGElement('g');
+  var n_list = [['2N>C', 'Cyanide']];
+  molecule.appendChild(getAtom('N',n_list));
+  molecule.appendChild(get2Bond(-90, getAtom('N',n_list)));
+  molecule.appendChild(get2Bond(90, getAtom('N',n_list)));
+  centerMolecule('Azide', -1, molecule);
+}
+
+function HydrocyanicAcid() {
+  var molecule = getSVGElement('g');
+  var h_list = [['-H', 'Cyanide']];
+  var n_list = [];
+  var c_list = [];
+  molecule.appendChild(getAtom('C',c_list));
+  molecule.appendChild(get3Bond(-90, getAtom('N',n_list)));
+  molecule.appendChild(getBond(90, getAtom('H',h_list)));
+  centerMolecule('Hydrocyanic Acid', 0, molecule);
+}
+
+function Acetate() {
+  var molecule = getSVGElement('g');
+  var c_list = [];
+  var o_list = [['+H', 'AceticAcid'], ['+R' ]];
+  molecule.appendChild(getAtom('C',c_list));
+  molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list)));
+  molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
+  molecule.appendChild(getBond(60, getAtom('CH3',[['O', 'Carbonate']])));
+  centerMolecule('Acetate Anion', 0, molecule);
+}
+
+function AceticAcid() {
+  var molecule = getSVGElement('g');
+  var c_list = [];
+  var o_list = [['-H', 'Acetate']];
+  molecule.appendChild(getAtom('C',c_list));
+  molecule.appendChild(get2Bond(-180, getAtom('O',o_list)));
+  molecule.appendChild(getBond(-60, getAtom('OH',o_list)));
+  molecule.appendChild(getBond(60, getAtom('CH3',[])));
+  centerMolecule('Acetic Acid', 0, molecule);
 }
 
 function Carbonate() {
   var molecule = getSVGElement('g');
-  var c_list = [['N', 'Nitrate']];
-  var o_list = [['-O', 'CO2'], ['+H', 'Bicarbonate']];
+  var c_list = [['N', 'Nitrate'], ['-C', 'Peroxide']];
+  var o_list = [['-O', 'CO2'], ['+H', 'Bicarbonate'], ['CH3', 'Acetate']];
   molecule.appendChild(getAtom('C', c_list, 60));
-  molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list,90)));
-  molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
-  molecule.appendChild(getAromaticBond(60, getAtom('O',o_list)));
-  centerMolecule('Carbonate', molecule);
+  molecule.appendChild(get2Bond(-180, getAtom('O',o_list,90)));
+  molecule.appendChild(getBond(-60, getAtom('O-',o_list)));
+  molecule.appendChild(getBond(60, getAtom('-O',o_list)));
+  centerMolecule('Carbonate', -2, molecule);
 }
 
 function Nitrate() {
   var molecule = getSVGElement('g');
   var n_list = [['C', 'Carbonate']];
-  var o_list = [['-O', 'Nitrite']];
+  var o_list = [['-O', 'Nitrite'],['+H', 'NitricAcid']];
   molecule.appendChild(getAtom('N', n_list, 60));
   molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list,90)));
   molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
   molecule.appendChild(getAromaticBond(60, getAtom('O',o_list)));
-  centerMolecule('Nitrate', molecule);
+  centerMolecule('Nitrate', -1, molecule);
 }
+
+function NitricAcid() {
+  var molecule = getSVGElement('g');
+  var n_list = [['C', 'Carbonate']];
+  var o_list = [['-O', 'NitrousAcid']];
+  molecule.appendChild(getAtom('N', n_list, 60));
+  molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list,90)));
+  molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
+  molecule.appendChild(getBond(60, getAtom('HO',[['-H', 'Nitrate']])));
+  centerMolecule('Nitric Acid', 0, molecule);
+}
+
+function NitrousAcid() {
+  var molecule = getSVGElement('g');
+  var n_list = [];
+  var o_list = [];
+  molecule.appendChild(getAtom('N', n_list, 60));
+  molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
+  molecule.appendChild(getBond(60, getAtom('HO',[['-H', 'Nitrite']])));
+  centerMolecule('Nitrous Acid', 0, molecule);
+}
+
 
 function Nitrite() {
   var molecule = getSVGElement('g');
   var n_list = [['C', 'Carbonate'], ['+O', 'Nitrate']];
-  var o_list = [['-O', 'NitricOxide']];
+  var o_list = [['+H', 'NitrousAcid'], ['-O', 'NitricOxide']];
   molecule.appendChild(getAtom('N', n_list));
   molecule.appendChild(getAromaticBond(-60, getAtom('O',o_list)));
   molecule.appendChild(getAromaticBond(60, getAtom('O',o_list)));
-  centerMolecule('Nitrite', molecule);
+  centerMolecule('Nitrite', -1, molecule);
+}
+
+function Ammonium() {
+  var molecule = getSVGElement('g');
+  var n_list = [];
+  var h_list = [['-H', 'Ammonia']];
+  molecule.appendChild(getAtom('N', n_list));
+  molecule.appendChild(getBond(0, getAtom('H',h_list)));
+  molecule.appendChild(getBond(90, getAtom('H',h_list)));
+  molecule.appendChild(getBond(180, getAtom('H',h_list)));
+  molecule.appendChild(getBond(-90, getAtom('H',h_list)));
+  centerMolecule('Ammonium', 1, molecule);
+}
+
+function Ammonia() {
+  var molecule = getSVGElement('g');
+  var n_list = [['O', 'Hydronium'], ['+H', 'Ammonium']];
+  var h_list = [['R', 'Amine']];
+  molecule.appendChild(getAtom('N', n_list));
+  molecule.appendChild(getBond(60, getAtom('H',h_list)));
+  molecule.appendChild(getBond(0, getAtom('H',h_list)));
+  molecule.appendChild(getBond(-60, getAtom('H',h_list)));
+  centerMolecule('Ammonia', 0, molecule);
+}
+
+function Amine() {
+  var molecule = getSVGElement('g');
+  var n_list = [['O', 'Hydronium']];
+  var h_list = [];
+  var r_list = [['H', 'Ammonia']]
+  molecule.appendChild(getAtom('N', n_list));
+  molecule.appendChild(getBond(60, getAtom('R',r_list)));
+  molecule.appendChild(getBond(0, getAtom('H',h_list)));
+  molecule.appendChild(getBond(-60, getAtom('H',h_list)));
+  centerMolecule('Amine', 0, molecule);
+}
+
+function Hydronium() {
+  var molecule = getSVGElement('g');
+  var n_list = [['N', 'Ammonia']];
+  var h_list = [['-H', 'Water']];
+  molecule.appendChild(getAtom('O', n_list));
+  molecule.appendChild(getBond(60, getAtom('H',h_list)));
+  molecule.appendChild(getBond(0, getAtom('H',h_list)));
+  molecule.appendChild(getBond(-60, getAtom('H',h_list)));
+  centerMolecule('Hydronium', 1, molecule);
+}
+
+function Water() {
+  var molecule = getSVGElement('g');
+  var n_list = [['+H', 'Hydronium']];
+  var h_list = [['-H', 'Hydroxide']];
+  molecule.appendChild(getAtom('O', n_list));
+  molecule.appendChild(getBond(60, getAtom('H',h_list)));
+  molecule.appendChild(getBond(-60, getAtom('H',h_list)));
+  centerMolecule('Water', 0, molecule);
+}
+
+function Hydroxide() {
+  var molecule = getSVGElement('g');
+  var n_list = [['+H', 'Water']];
+  var h_list = [['O', 'Peroxide']];
+  molecule.appendChild(getAtom('O', n_list));
+  molecule.appendChild(getBond(-90, getAtom('H',h_list)));
+  centerMolecule('Hydroxide', -1, molecule);
+}
+
+function Peroxide() {
+  var molecule = getSVGElement('g');
+  var o_list = [['H', 'Hydroxide'], ['N', 'NitricOxide'], ['C', 'CarbonMonoxide']];
+  molecule.appendChild(getAtom('O', o_list));
+  molecule.appendChild(getBond(-90, getAtom('O',o_list)));
+  centerMolecule('Peroxide', -2, molecule);
 }
 
 function NitricOxide() {
   var molecule = getSVGElement('g');
-  var n_list = [['C', 'CarbonMonoxide'], ['+O', 'Nitrite']];
+  var n_list = [['C', 'CarbonMonoxide'], ['O', 'Peroxide'], ['+O', 'Nitrite']];
   var o_list = [];
   molecule.appendChild(getAtom('N', n_list));
-  molecule.appendChild(getAromaticBond(-90, getAtom('O',o_list)));
-  centerMolecule('Nitric Oxide', molecule);
+  molecule.appendChild(getAromatic2Bond(-90, getAtom('O',o_list)));
+  centerMolecule('Nitric Oxide', 0, molecule);
 }
 
 function Bicarbonate() {
@@ -83,10 +232,10 @@ function Bicarbonate() {
   var o_list = [['-O', 'CO2'], ['+H', 'CarbonicAcid']];
   var oh_list = [['-O', 'CO2'], ['-H', 'Carbonate']];
   molecule.appendChild(getAtom('C', c_list));
-  molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list)));
+  molecule.appendChild(getBond(-180, getAtom('-O',o_list)));
   molecule.appendChild(getBond(-60, getAtom('OH',oh_list)));
-  molecule.appendChild(getAromaticBond(60, getAtom('O',o_list)));
-  centerMolecule('Bicarbonate', molecule);
+  molecule.appendChild(get2Bond(60, getAtom('O',o_list)));
+  centerMolecule('Bicarbonate', -1, molecule);
 }
 
 function CarbonicAcid() {
@@ -95,10 +244,10 @@ function CarbonicAcid() {
   var o_list = [['-O', 'CO2'], ['H', 'FormicAcid']];
   var oh_list = [['-O', 'CO2'], ['-H', 'Bicarbonate']];
   molecule.appendChild(getAtom('C', c_list));
-  molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list,90)));
+  molecule.appendChild(get2Bond(-180, getAtom('O',o_list,90)));
   molecule.appendChild(getBond(-60, getAtom('OH',oh_list)));
-  molecule.appendChild(getBond(60, getAtom('OH',oh_list)));
-  centerMolecule('Carbonic Acid', molecule);
+  molecule.appendChild(getBond(60, getAtom('HO',oh_list)));
+  centerMolecule('Carbonic Acid', 0, molecule);
 }
 
 function FormicAcid() {
@@ -111,7 +260,7 @@ function FormicAcid() {
   molecule.appendChild(getAromaticBond(-180, getAtom('O',o_list)));
   molecule.appendChild(getBond(-60, getAtom('OH',oh_list)));
   molecule.appendChild(getBond(60, getAtom('H',h_list)));
-  centerMolecule('Carbonic Acid', molecule);
+  centerMolecule('Carbonic Acid', 0, molecule);
 }
 
 const bond_distance = 50;
@@ -175,7 +324,7 @@ function get3Bond(angle, atom) {
   var g = _getBondAtom(angle, atom);
   var bonds = getSVGElement('g');
   g.appendChild(bonds);
-  var bond = _getBondLine('aromatic_bond');
+  var bond = _getBondLine('bond');
   bond.setAttribute('x1', bond_spacing);
   bond.setAttribute('x2', bond_spacing);
   bonds.appendChild(bond);
